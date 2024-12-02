@@ -45,6 +45,12 @@ import static java.util.UUID.randomUUID;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final ClientConfig clientConfig;
+
+    public SecurityConfig(ClientConfig clientConfig) {
+        this.clientConfig = clientConfig;
+    }
+
     @Bean
     @Order(1)
     public SecurityFilterChain authorizationServerSecurityFilterChain(HttpSecurity http)
@@ -97,14 +103,13 @@ public class SecurityConfig {
     @Bean
     public RegisteredClientRepository registeredClientRepository() {
         RegisteredClient oidcClient = RegisteredClient.withId(randomUUID().toString())
-                .clientId("oidc-client")
-                .clientSecret("{noop}secret")
+                .clientId(clientConfig.id())
+                .clientSecret("{noop}" + clientConfig.secret())
                 .clientAuthenticationMethod(ClientAuthenticationMethod.CLIENT_SECRET_BASIC)
                 .authorizationGrantType(AuthorizationGrantType.AUTHORIZATION_CODE)
                 .authorizationGrantType(AuthorizationGrantType.REFRESH_TOKEN)
-                .redirectUri("http://localhost:3000/api/auth/callback/spring")
-                .redirectUri("http://localhost:3000/api/auth/callback")
-                .postLogoutRedirectUri("http://localhost:3000/")
+                .redirectUri(clientConfig.redirectUri())
+                .postLogoutRedirectUri(clientConfig.logoutRedirectUri())
                 .scope(OidcScopes.OPENID)
                 .scope(OidcScopes.PROFILE)
                 .build();

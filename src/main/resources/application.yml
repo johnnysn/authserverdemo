@@ -4,3 +4,11 @@ server:
 logging:
   level:
     org.springframework.security: trace
+
+app:
+  auth:
+    client:
+      id: oidc-client
+      secret: secret
+      redirect-uri: "http://localhost:3000/api/auth/callback/spring"
+      logout-redirect-uri: "http://localhost:3000/"
